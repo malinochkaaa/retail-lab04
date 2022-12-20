@@ -5,6 +5,8 @@ from rasa_sdk.events import SlotSet
 from rasa_sdk.events import FollowupAction
 from rasa_sdk.events import BotUttered
 import sqlite3
+import uuid
+from datetime import datetime as dt
 
 # change this to the location of your SQLite file
 path_to_db = "actions/example.db"
@@ -29,7 +31,7 @@ class ActionProductSearch(Action):
 
         # place cursor on correct row based on search criteria
         cursor.execute("SELECT * FROM inventory WHERE color=? AND size=?", shoe)
-        
+
         # retrieve sqlite row
         data_row = cursor.fetchone()
 
@@ -188,10 +190,60 @@ class GiveName(Action):
     ) -> List[Dict[Text, Any]]:
 
         evt = BotUttered(
-            text = "my name is bot? idk", 
+            text = "my name is bot? idk",
             metadata = {
                 "nameGiven": "bot"
             }
         )
 
         return [evt]
+
+class AddToCart(Action):
+    def name(self) -> Text:
+        return "action_add_to_cart"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        order_date = dt.now().strftime('%Y-%m-%d')
+        order_number = uuid.uuid1().int
+        order_email = str(tracker.get_slot("email"))
+        color = str(tracker.get_slot("color"))
+        size = float(tracker.get_slot("size"))
+        order_num_str = str(order_number)
+        order_number = int(order_num_str[0:8])
+        status = "in_cart"
+        # connect to DB
+        connection = sqlite3.connect(path_to_db)
+        cursor = connection.cursor()
+
+        # get slots and save as tuple
+        shoe = [(color), (size)]
+
+        # place cursor on correct row based on search criteria
+        cursor.execute(
+            "SELECT * FROM inventory WHERE color=? AND size=?", shoe)
+
+        # retrieve sqlite row
+        data_row = cursor.fetchone()
+
+        if data_row:
+            # change status of entry
+            new_order = (order_date, order_number, order_email, color, size, status)
+            cursor.execute('INSERT INTO orders VALUES (?,?,?,?,?,?)', new_order)
+            connection.commit()
+            connection.close()
+            slots_to_reset = ["size", "color"]
+            # confirm cancellation
+            dispatcher.utter_message(template="utter_order_in_cart")
+            return [SlotSet(slot, None) for slot in slots_to_reset]
+        else:
+            # db didn't have an entry with this email
+            dispatcher.utter_message(template="utter_not_in_cart")
+            connection.close()
+            slots_to_reset = ["size", "color"]
+            return [SlotSet(slot, None) for slot in slots_to_reset]
