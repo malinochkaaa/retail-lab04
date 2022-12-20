@@ -219,3 +219,8 @@ nlu:
   examples: |
     - can you tell me your name?
     - what's your name?
+- intent: add_to_cart
+  examples: |
+    - can you add shoes to cart?
+    - add to cart 
+    - Add shoes to cart
