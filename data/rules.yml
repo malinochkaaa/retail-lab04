@@ -46,6 +46,35 @@ rules:
   - action: survey_form
   - active_loop: survey_form
 
+# add to cart
+- rule: Activate email form for adding order to cart
+  steps:
+  - intent: add_to_cart
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: add_to_cart_form
+  - active_loop: add_to_cart_form
+
+- rule: Submit adding to cart form, survey complete
+  condition:
+  - active_loop: add_to_cart
+  - slot_was_set:
+    - survey_complete: True
+  steps:
+  - action: add_to_cart_form
+  - active_loop: null
+  - action: action_add_to_cart
+
+- rule: Submit add to cart form, needs survey
+  condition:
+  - active_loop: add_to_cart_form
+  steps:
+  - action: add_to_cart_form
+  - active_loop: null
+  - action: action_add_to_cart
+  - action: survey_form
+  - active_loop: survey_form
+
 # cancel order
 
 - rule: Activate email form for cancelling order

@@ -5,7 +5,6 @@ from rasa_sdk.events import SlotSet
 from rasa_sdk.events import FollowupAction
 from rasa_sdk.events import BotUttered
 import sqlite3
-import uuid
 from datetime import datetime as dt
 
 # change this to the location of your SQLite file
@@ -210,12 +209,9 @@ class AddToCart(Action):
     ) -> List[Dict[Text, Any]]:
 
         order_date = dt.now().strftime('%Y-%m-%d')
-        order_number = uuid.uuid1().int
         order_email = str(tracker.get_slot("email"))
         color = str(tracker.get_slot("color"))
         size = float(tracker.get_slot("size"))
-        order_num_str = str(order_number)
-        order_number = int(order_num_str[0:8])
         status = "in_cart"
         # connect to DB
         connection = sqlite3.connect(path_to_db)
@@ -233,8 +229,8 @@ class AddToCart(Action):
 
         if data_row:
             # change status of entry
-            new_order = (order_date, order_number, order_email, color, size, status)
-            cursor.execute('INSERT INTO orders VALUES (?,?,?,?,?,?)', new_order)
+            new_order = (order_date, order_email, color, size, status)
+            cursor.execute('INSERT INTO orders("order_date", "email", "color", "size", "status") VALUES (?,?,?,?,?)', new_order)
             connection.commit()
             connection.close()
             slots_to_reset = ["size", "color"]

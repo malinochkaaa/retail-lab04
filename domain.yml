@@ -17,6 +17,7 @@ intents:
 - out_of_scope
 - nlu_fallback
 - whats_your_name
+- add_to_cart
 entities:
 - email
 - color
@@ -107,6 +108,8 @@ responses:
       title: Check inventory
     - payload: Subscribe to product updates
       title: Subscribe to product updates
+    - payload: Add to cart
+      title: Add shoes to cart
     text: Hi there! I'm a demo bot from Rasa to help you with ordering shoes. How can I help you?
   utter_default:
   - text: I don't think I understand. Can you try providing more detail?
@@ -195,6 +198,10 @@ responses:
   - text: Sorry, seems like we don't have those shoes.
   utter_order_shoes:
   - text: Sorry, I can't actually help you order the shoes. Please visit our site to buy some nice shoes! I can help you check inventory, see the status of an order or even make a change to that order.
+  utter_order_in_cart:
+  - text: Your order is in cart.
+  utter_not_in_cart:
+  - text: Sorry, I can't put your order in cart.
 actions:
 - action_product_search
 - action_survey_submit
@@ -202,11 +209,16 @@ actions:
 - action_cancel_order
 - action_return
 - action_give_name
+- action_add_to_cart
 forms:
   order_status_form:
     ignored_intents: []
     required_slots:
     - email
+  add_to_cart_form:
+    ignored_intents: [ ]
+    required_slots:
+      - email
   cancel_form:
     ignored_intents: []
     required_slots:
