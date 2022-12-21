@@ -5,12 +5,30 @@ nlu:
     - register me with [asd@misis.ru](email) and [123456](password)
     - sign up with [asd@misis.ru](email) and [123456](password)
     - Registration
+    - [asd@misis.ru](email)
+    - [123456](password)
+    - [121212](password)
+    - [134562](password)
+    - [17sdf6](password)
+    - my password for registration is [123456](password)
+    - my password for registration is [121212](password)
+    - my password for registration is [134562](password)
+    - my password for registration is [17sdf6](password)
+    - my password for registration is [1234ds](password)
 - intent: sign_in
   examples: |
     - I want to sign in with [asd@misis.ru](email) and [123456](password)
     - sign in with [asd@misis.ru](email) and [123456](password)
     - sign in [asd@misis.ru](email) and [123456](password)
     - Sign in
+    - [123456](password)
+    - [asd@misis.ru](email)
+    - my password for sign in is [123456](password)
+    - sign in password is [123456](password)
+    - sign in password is [121212](password)
+    - sign in password is [134562](password)
+    - sign in password is [17sdf6](password)
+    - sign in password is [1234ds](password)
 - intent: order_status
   examples: |
     - check status of my order

@@ -1,0 +1,44 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-color",
+      "2": "I-color",
+      "3": "L-color",
+      "4": "U-color",
+      "5": "B-email",
+      "6": "I-email",
+      "7": "L-email",
+      "8": "U-email",
+      "9": "B-negation",
+      "10": "I-negation",
+      "11": "L-negation",
+      "12": "U-negation",
+      "13": "B-password",
+      "14": "I-password",
+      "15": "L-password",
+      "16": "U-password",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-color": 1,
+      "I-color": 2,
+      "L-color": 3,
+      "U-color": 4,
+      "B-email": 5,
+      "I-email": 6,
+      "L-email": 7,
+      "U-email": 8,
+      "B-negation": 9,
+      "I-negation": 10,
+      "L-negation": 11,
+      "U-negation": 12,
+      "B-password": 13,
+      "I-password": 14,
+      "L-password": 15,
+      "U-password": 16,
+      "O": 0
+    },
+    "num_tags": 17
+  }
+]
