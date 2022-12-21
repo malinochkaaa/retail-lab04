@@ -17,8 +17,11 @@ intents:
 - out_of_scope
 - nlu_fallback
 - whats_your_name
+- registration
+- sign_in
 entities:
 - email
+- password
 - color
 - number
 - negation
@@ -33,6 +36,16 @@ slots:
       - active_loop: product_stock_form
     - type: from_entity
       entity: color
+  password:
+    type: text
+    influence_conversation: false
+    mappings:
+    - entity: password
+      type: from_entity
+      conditions:
+        - active_loop: registration_form
+        - active_loop: sign_in_form
+
   email:
     type: text
     influence_conversation: false
@@ -44,6 +57,8 @@ slots:
         requested_slot: email
       - active_loop: cancel_form
       - active_loop: product_updates_form
+      - active_loop: registration_form
+      - active_loop: sign_in_form
     - intent:
       - inform
       type: from_text
@@ -57,6 +72,8 @@ slots:
       - active_loop: return_form
     - type: from_entity
       entity: email
+
+
   size:
     type: text
     influence_conversation: false
@@ -65,6 +82,8 @@ slots:
       type: from_entity
       conditions:
       - active_loop: product_stock_form
+
+
   rating:
     type: text
     influence_conversation: false
@@ -73,6 +92,7 @@ slots:
       type: from_entity
       conditions:
       - active_loop: survey_form
+
   open_feedback:
     type: text
     influence_conversation: false
@@ -81,6 +101,7 @@ slots:
       conditions:
       - active_loop: survey_form
         requested_slot: open_feedback
+
   requested_slot:
     type: any
     influence_conversation: false
@@ -96,6 +117,7 @@ slots:
     influence_conversation: true
     mappings:
     - type: custom
+
 responses:
   utter_greet:
   - buttons:
@@ -107,7 +129,13 @@ responses:
       title: Check inventory
     - payload: Subscribe to product updates
       title: Subscribe to product updates
+    - payload: Registration
+      title: Registration
+    - payload: Sign in
+      title: Sign in
     text: Hi there! I'm a demo bot from Rasa to help you with ordering shoes. How can I help you?
+
+
   utter_default:
   - text: I don't think I understand. Can you try providing more detail?
   - text: um, what did you just say to me?
@@ -128,8 +156,20 @@ responses:
   - text: I can keep you up to date with our weekly email about product updates! If you'd like to be added to the list, please add your email address.
   utter_product_updates_finish:
   - text: Alright, you're subscribed!
+  utter_registration_start:
+    - text: Let's register you! What are your email and password?
+  utter_sign_in_start:
+    - text: What are your email and password?
   utter_product_stock_start:
   - text: I can help you find some shoes!
+  utter_ask_create_registration_form_email:
+  - text: Please, say me your email
+  utter_ask_create_registration_form_password:
+  - text: and your password is..?
+  utter_ask_create_sign_in_form_email:
+  - text: Please, say me your email
+  utter_ask_create_sign_in_form_password:
+  - text: and your password is..?
   utter_ask_product_stock_form_size:
   - text: What size shoe would you like?
   utter_ask_product_stock_form_color:
@@ -202,7 +242,21 @@ actions:
 - action_cancel_order
 - action_return
 - action_give_name
+- action_registration
+- action_sign_in
 forms:
+  create_registration_form:
+    ignored_intents: [ ]
+    required_slots:
+    - email
+    - password
+
+  create_sign_in_form:
+    ignored_intents: [ ]
+    required_slots:
+    - email
+    - password
+
   order_status_form:
     ignored_intents: []
     required_slots:

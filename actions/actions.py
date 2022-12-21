@@ -9,6 +9,87 @@ import sqlite3
 # change this to the location of your SQLite file
 path_to_db = "actions/example.db"
 
+class Registration(Action):
+    def name(self) -> Text:
+        return "action_registration"
+
+    def run(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # connect to DB
+        dispatcher.utter_message(text="Start registration...")
+        connection = sqlite3.connect(path_to_db)
+        cursor = connection.cursor()
+
+        # get slots and save as tuple
+        reg_params = [(tracker.get_slot("email")), (tracker.get_slot("password"))]
+
+        # place cursor on correct row based on search criteria
+        cursor.execute("SELECT * FROM users WHERE email=?", reg_params[0])
+
+        # retrieve sqlite row
+        data_row = cursor.fetchone()
+
+        if data_row:
+            dispatcher.utter_message(text="Пользователь с таким email уже существует.")
+            connection.close()
+            #return [SlotSet("survey_complete", True)]
+            return []
+        else:
+            # provide in stock message
+            cursor.execute("INSERT INTO users (email, password, status) VALUES (?, ?, 0);", reg_params)
+            cursor.commit()
+            dispatcher.utter_message(text="Вы успешно зарегистрированы!")
+            connection.close()
+            slots_to_reset = ["email", "password"]
+            return [SlotSet(slot, None) for slot in slots_to_reset]
+
+class SignIn(Action):
+    def name(self) -> Text:
+        return "action_sign_in"
+
+    def run(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # connect to DB
+        connection = sqlite3.connect(path_to_db)
+        cursor = connection.cursor()
+
+        # get slots and save as tuple
+        sign_in_params = [(tracker.get_slot("email")), (tracker.get_slot("password"))]
+
+        # place cursor on correct row based on search criteria
+        cursor.execute("SELECT * FROM users WHERE email=?", sign_in_params[0])
+
+        # retrieve sqlite row
+        data_row = cursor.fetchone()
+
+        if not data_row:
+            dispatcher.utter_message(text="Пользователя с таким email не существует:(")
+            connection.close()
+            return []
+        else:
+            # provide in stock message
+            cursor.execute("SELECT * FROM users WHERE email=? AND password=?", sign_in_params)
+
+            data_row = cursor.fetchone()
+            if data_row:
+                connection.close()
+                dispatcher.utter_message(text="Вы успешно зарегистрированы!")
+                return [SlotSet("user_sign_in", True)]
+            else:
+                connection.close()
+                dispatcher.utter_message(text="Неправильный email или пароль!")
+                return []
+
+
+
 class ActionProductSearch(Action):
     def name(self) -> Text:
         return "action_product_search"

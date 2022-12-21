@@ -1,5 +1,16 @@
 version: "2.0"
 nlu:
+- intent: registration
+  examples: |
+    - register me with [asd@misis.ru](email) and [123456](password)
+    - sign up with [asd@misis.ru](email) and [123456](password)
+    - Registration
+- intent: sign_in
+  examples: |
+    - I want to sign in with [asd@misis.ru](email) and [123456](password)
+    - sign in with [asd@misis.ru](email) and [123456](password)
+    - sign in [asd@misis.ru](email) and [123456](password)
+    - Sign in
 - intent: order_status
   examples: |
     - check status of my order
