@@ -202,7 +202,7 @@ responses:
   utter_order_shoes:
   - text: Sorry, I can't actually help you order the shoes. Please visit our site to buy some nice shoes! I can help you check inventory, see the status of an order or even make a change to that order.
   utter_order_in_cart:
-  - text: Your order is in cart.
+  - text: Your {color} shoe, {size} size is in cart!
   utter_not_in_cart:
   - text: Sorry, I can't put your order in cart.
   utter_ask_add_to_cart_form_email:
@@ -227,9 +227,9 @@ forms:
   add_to_cart_form:
     ignored_intents: [ ]
     required_slots:
+      - email
       - size
       - color
-      - email
   cancel_form:
     ignored_intents: []
     required_slots:
