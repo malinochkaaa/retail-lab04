@@ -46,6 +46,25 @@ rules:
   - action: survey_form
   - active_loop: survey_form
 
+# reserve shoe
+
+- rule: Activate form for reservation create
+  steps:
+  - intent: reserve_shoes
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: create_reservation_form
+  - active_loop: create_reservation_form
+
+- rule: Submit create reservation form, survey complete
+  condition:
+  - active_loop: create_reservation_form
+  steps:
+  - action: create_reservation_form
+  - active_loop: null
+  - action: action_reserve_shoe
+  - active_loop: create_reservation_form
+
 # cancel order
 
 - rule: Activate email form for cancelling order
