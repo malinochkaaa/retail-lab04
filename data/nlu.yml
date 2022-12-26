@@ -224,3 +224,7 @@ nlu:
     - can you add shoes to cart?
     - add to cart 
     - Add shoes to cart
+- intent: action_show_colors
+  examples: |
+    - Can you show available colors?
+    - show colors

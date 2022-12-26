@@ -66,6 +66,15 @@ stories:
   - action: action_deactivate_loop
   - active_loop: null
 
+- story: User stops show_colors
+  steps:
+  - active_loop: show_colors_form
+  - intent: deny
+  - action: utter_start_over
+  - action: utter_greet
+  - action: action_deactivate_loop
+  - active_loop: null
+
 # this is to demonstrate adding metadata to a response
 - story: user asks for name
   steps:

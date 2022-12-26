@@ -244,3 +244,31 @@ class AddToCart(Action):
             connection.close()
             slots_to_reset = ["size", "color"]
             return [SlotSet(slot, None) for slot in slots_to_reset]
+
+class ShowColors(Action):
+    def name(self) -> Text:
+        return "action_show_colors"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        color = str(tracker.get_slot("color"))
+        connection = sqlite3.connect(path_to_db)
+        cursor = connection.cursor()
+        cursor.execute('SELECT DISTINCT colors FROM inventory WHERE count <> 0')
+        data_row = cursor.fetchone()
+
+        if data_row:
+            connection.close()
+            colors = ", ".join([x for x in cursor])
+            dispatcher.utter_message(template="utter_colors_shown", colors=colors)
+            return []
+
+        else:
+            dispatcher.utter_message(template="utter_colors_not_shown")
+            connection.close()
+            return []
