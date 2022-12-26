@@ -209,7 +209,6 @@ class AddToCart(Action):
     ) -> List[Dict[Text, Any]]:
 
         order_date = dt.now().strftime('%Y-%m-%d')
-        order_email = str(tracker.get_slot("email"))
         color = str(tracker.get_slot("color"))
         size = float(tracker.get_slot("size"))
         status = "in_cart"
@@ -222,21 +221,23 @@ class AddToCart(Action):
 
         # place cursor on correct row based on search criteria
         cursor.execute(
-            "SELECT * FROM inventory WHERE color=? AND size=?", shoe)
+            "SELECT * FROM inventory WHERE color=? AND size=? AND count <> 0", shoe)
 
         # retrieve sqlite row
         data_row = cursor.fetchone()
 
         if data_row:
-            # change status of entry
-            new_order = (order_date, order_email, color, size, status)
-            cursor.execute('INSERT INTO orders("order_date", "email", "color", "size", "status") VALUES (?,?,?,?,?)', new_order)
-            connection.commit()
-            connection.close()
-            slots_to_reset = ["size", "color"]
-            # confirm cancellation
-            dispatcher.utter_message(template="utter_order_in_cart")
-            return [SlotSet(slot, None) for slot in slots_to_reset]
+            cursor.execute("SELECT email FROM users WHERE status == 1")
+            email = cursor.fetchone()[0]
+            if email:
+                # change status of entry
+                cursor.execute('INSERT INTO orders("order_date", "email", "color", "size", "status") VALUES (?,?,?,?,?)', (order_date, email, data_row[1], data_row[0], "in_cart"))
+                connection.commit()
+                connection.close()
+                slots_to_reset = ["size", "color"]
+                # confirm cancellation
+                dispatcher.utter_message(template="utter_order_in_cart")
+                return [SlotSet(slot, None) for slot in slots_to_reset]
         else:
             # db didn't have an entry with this email
             dispatcher.utter_message(template="utter_not_in_cart")
